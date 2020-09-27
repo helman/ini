@@ -145,6 +145,14 @@ function isQuoted (val) {
     (val.charAt(0) === "'" && val.slice(-1) === "'")
 }
 
+function isJSONValue (val) {
+  try {
+    JSON.parse(val)
+    return true
+  } catch (_) {}
+  return false
+}
+
 function safe (val) {
   return (typeof val !== 'string' ||
     val.match(/[=\r\n]/) ||
@@ -158,7 +166,7 @@ function safe (val) {
 
 function unsafe (val, doUnesc) {
   val = (val || '').trim()
-  if (isQuoted(val)) {
+  if (val && (isQuoted(val) || isJSONValue(val))) {
     // remove the single quotes before calling JSON.parse
     if (val.charAt(0) === "'") {
       val = val.substr(1, val.length - 2)
